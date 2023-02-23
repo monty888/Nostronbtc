@@ -1,9 +1,9 @@
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-import electroncash.version
-from electroncash.i18n import _
-from electroncash.plugins import BasePlugin, hook
+import electrum.version
+from electrum.i18n import _
+from electrum.plugin import BasePlugin, hook
 
 class Plugin(BasePlugin):
     electrumcash_qt_gui = None

@@ -1,6 +1,5 @@
 """Wrapper class to import monstr_terminal"""
 
-
 from . import monstr_terminal 
 class monstrwrap():
     def __init__(self,ui_window=None):

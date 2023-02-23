@@ -250,7 +250,7 @@ class ASQLiteDatabase(ADatabase, ABC):
 
         self._f_name = f_name
         # as SQLite locks the entire db at some point during any update we try and manage writes
-        # so we block ourself do we shouldn't get locked err
+        # so we block ourself and make it less likely to get db locked error...
         # of course if another instance is being used or another python the db could still end up locked and we'd fail
         # :(. We only put the locks around writes, reads will leave to fail for the caller to deal with...
         self._lock = Lock()
@@ -349,6 +349,7 @@ class ASQLiteDatabase(ADatabase, ABC):
 
         if args is None:
             args = []
+
         async with aiosqlite.connect(self._f_name) as c:
             rs = await c.execute(sql, args)
 
@@ -394,13 +395,14 @@ class PostgresDatabase(Database, ABC):
         self._name = db_name
         self._user = user
         self._password = password
-        if psycopg2 is None:
-            raise Exception('PostgresDatabase:: psycopg2 lib is missing?!')
+
+    def _get_con(self):
+        return psycopg2.connect("dbname=%s user=%s password=%s" % (self._name,
+                                                                   self._user,
+                                                                   self._password))
 
     def execute_sql(self, sql, args=None):
-        with psycopg2.connect("dbname=%s user=%s password=%s" % (self._name,
-                                                                 self._user,
-                                                                 self._password)) as c:
+        with self._get_con() as c:
             with c.cursor() as cur:
                 logging.debug('Database::execute_batch SQL: %s\n ARGS: %s' % (sql,
                                                                               args))
@@ -411,9 +413,7 @@ class PostgresDatabase(Database, ABC):
         raise Exception('not implemented!')
 
     def execute_batch(self, batch):
-        with psycopg2.connect("dbname=%s user=%s password=%s" % (self._name,
-                                                                 self._user,
-                                                                 self._password)) as c:
+        with self._get_con() as c:
             with c.cursor() as cur:
                 for c_cmd in batch:
                     args = []
@@ -427,9 +427,7 @@ class PostgresDatabase(Database, ABC):
                 c.commit()
 
     def select_sql(self, sql, args=None) -> DataSet:
-        with psycopg2.connect("dbname=%s user=%s password=%s" % (self._name,
-                                                                 self._user,
-                                                                 self._password)) as c:
+        with self._get_con() as c:
             with c.cursor() as cur:
                 cur.execute(sql, args)
                 # get heads

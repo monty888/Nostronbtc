@@ -17,13 +17,10 @@ class ProfileFileAlias:
         except FileNotFoundError as fe:
             logging.info('FileProfiles::__init__ file doesn\'t exist yet - %s' % self._file_name)
 
-    def get_profile(self, profile_name: str):
+    def get_profile(self, profile_name: str) -> Profile:
         ret = None
         matches = self._store.select_profiles(filter={
-            'profile_name': {
-                'exact': True,
-                'values': profile_name
-            }
+            'profile_name': profile_name
         })
         if matches:
             ret = matches[0]
