@@ -3,7 +3,7 @@
 
 # Nostron 
 
-Nostron is a plugin for the Electron-Cash BCH wallet.  It is a prototype minimal nostr implementation, implementing Nostr NIP-01. It uses the [monstr_terminal](https://github.com/monty888/monstr_terminal) python library for its tooling.
+Nostronbtc is a fork of https://github.com/Electron-Cash/Nostron to work in electrum for BTC.  It is a prototype minimal nostr implementation, implementing Nostr NIP-01. It uses the [monstr_terminal](https://github.com/monty888/monstr_terminal) python library for its tooling.
 
 ![Nostron screenshot](nostron-ss.png)
 
